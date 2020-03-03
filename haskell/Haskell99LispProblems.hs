@@ -3,8 +3,10 @@
 -- http://aperiodic.net/phil/scala/s-99/
 -- To run the code stack ghci
 -- :load Haskell99LispProblems
-
 module Haskell99LispProblems where
+
+import Data.Tree
+import Data.List (group)
 
 -- Problem 1
 -- Find the last element of a list.
@@ -64,10 +66,12 @@ isPalindrome ls = isPalindromeHelper ls reversed
 
 -- Problem 7
 -- Flatten a nested list
-data Nested a = One a | Many [Nested a]
-flattenList :: Nested a -> [a]
-flattenList (One x) = [x]
-flattenList (Many x) = concat $ map flattenList x
+data NestedList a = Elem a | List [NestedList a]
+-- This data type is equivalent to Data.Tree see∷
+-- http://hackage.haskell.org/package/containers-0.6.2.1/docs/Data-Tree.html#t:Forest
+flattenList :: NestedList a -> [a]
+flattenList (Elem x) = [x]
+flattenList (List x) = concat $ map flattenList x
 
 
 -- Problem 8
@@ -80,3 +84,19 @@ compressList (x1:x2:xs)
   | x1 == x2 = compressList(x2 : xs)
   -- If they are different keep x1 and continue to recurse on x2 + list
   | x1 /= x2 = x1 : compressList(x2 : xs)
+
+-- So much better!
+compress :: Eq a => [a] -> [a]
+compress = map head . group
+
+-- Problem 9
+-- Pack consecutive duplicates of list elements into sublists.
+-- packListCheat :: (Eq a) => [a] ->  [[a]]
+packListCheat xs = group xs
+
+packList :: (Eq a) => [a] ->  [[a]]
+packList [] = []
+packList (x1:xs) = first : packList second
+  where currentSpan = span (== x1) (x1:xs)  -- Why do I need parenthases here?
+        first = fst $ currentSpan
+        second = snd $ currentSpan
