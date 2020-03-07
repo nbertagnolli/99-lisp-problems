@@ -97,6 +97,23 @@ packListCheat xs = group xs
 packList :: (Eq a) => [a] ->  [[a]]
 packList [] = []
 packList (x1:xs) = first : packList second
-  where currentSpan = span (== x1) (x1:xs)  -- Why do I need parenthases here?
+  where currentSpan = span (== x1) $ x1:xs
         first = fst $ currentSpan
         second = snd $ currentSpan
+
+
+-- Problem 10
+-- Run-length encoding of a list.
+-- Use the result of problem P09 to implement the so-called run-length encoding
+-- data compression method. Consecutive duplicates of elements are encoded as
+-- tuples (N, E) where N is the number of duplicates of the element E.
+runLengthEncoding :: (Eq a) => [a] -> [(a, Int)]
+runLengthEncoding = map (\x -> (head x, length x)) . packList
+
+
+-- Problem 11
+-- Modified run-length encoding.
+-- Modify the result of problem P10 in such a way that if an element has no
+-- duplicates it is simply copied into the result list. Only elements with
+-- duplicates are transferred as (N, E) terms.
+-- modRunLengthEncoding :: (Eq a)
